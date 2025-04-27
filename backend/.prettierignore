@@ -1,0 +1,17 @@
+# .prettierignore
+
+# Ignore build outputs
+node_modules/
+dist/
+
+# Ignore Prisma and generated files
+prisma/
+src/generated/
+src/generated/prisma/
+
+# Ignore environment files
+*.env
+.env.*
+
+# Ignore editor settings
+.vscode/
