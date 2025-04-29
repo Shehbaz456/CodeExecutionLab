@@ -1,17 +1,13 @@
 import express from "express";
-import { check, login, logout, register } from "../controllers/auth.controller.js";
+import { registerUser } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
+import { upload } from "../middleware/multer.middleware.js";
 
+const router = express.Router();
 
-const authRoutes = express.Router();
+router.post("/register",upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "coverImage", maxCount: 1 },
+  ]) , registerUser)
 
-
-authRoutes.post("/register" , register)
-
-authRoutes.post("/login" , login)
-
-authRoutes.post("/logout" ,authMiddleware ,  logout)
-
-authRoutes.get("/check" ,authMiddleware ,  check)
-
-export default authRoutes;
+export default router;
