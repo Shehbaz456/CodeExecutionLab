@@ -163,4 +163,32 @@ export const loginUser = asyncHandler(async (req, res) => {
         )
       );
 });
+
+export const logoutUser = asyncHandler(async (req, res) => {
+    const userId = req.user?.id;
+    console.log("req.user logout",req.user);
+    
   
+    if (!userId) {
+      return res.status(401).json(new ApiResponse(401, {}, "Unauthorized"));
+    }
+  
+    // Remove refreshToken from database
+    await db.user.update({
+      where: { id: userId },
+      data: { refreshToken: null },
+    });
+  
+    // Clear cookies
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+    };
+  
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User logged out successfully"));
+  });
