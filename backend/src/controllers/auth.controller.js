@@ -8,8 +8,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 
-/** Generate Access Token and Refresh Token */
-
+/* Generate Access Token and Refresh Token */
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
         const user = await db.user.findUnique({
@@ -19,7 +18,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
         if (!user) {
             throw new ApiError(404, "User not found");
         }
-
+        
         const accessToken = jwt.sign(
             {
                 id: user.id,
@@ -29,13 +28,13 @@ const generateAccessAndRefreshTokens = async (userId) => {
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
         );
-
+       
         const refreshToken = jwt.sign(
             { id: user.id },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
         );
-
+        
         await db.user.update({
             where: { id: userId },
             data: { refreshToken },
@@ -109,3 +108,59 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     return res.status(201).json(new ApiResponse(201, userResponse, "User registered successfully"));
 });
+
+
+export const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+  
+    if (!email || !password) {
+      throw new ApiError(400, "Email and password are required");
+    }
+  
+    // Find user by email
+    const user = await db.user.findUnique({
+      where: { email },
+    });
+  
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+  
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new ApiError(401, "Invalid credentials");
+    }
+  
+    // Generate tokens
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user.id);
+  
+    // Update refresh token in DB
+    await db.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
+  
+    // Prepare user response without sensitive data
+    const { password: _, refreshToken: __, ...userData } = user;
+  
+    // Set cookies
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+    };
+  
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, cookieOptions)
+      .cookie("refreshToken", refreshToken, cookieOptions)
+      .json(
+        new ApiResponse(
+          200,
+          { user: userData, accessToken, refreshToken },
+          "Login successful"
+        )
+      );
+});
+  
