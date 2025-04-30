@@ -47,7 +47,6 @@ const generateAccessAndRefreshTokens = async (userId) => {
     }
 };
 
-
 export const registerUser = asyncHandler(async (req, res) => {
     const {email , password , name} = req.body;
 
@@ -108,7 +107,6 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     return res.status(201).json(new ApiResponse(201, userResponse, "User registered successfully"));
 });
-
 
 export const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
@@ -191,4 +189,17 @@ export const logoutUser = asyncHandler(async (req, res) => {
       .clearCookie("accessToken", options)
       .clearCookie("refreshToken", options)
       .json(new ApiResponse(200, {}, "User logged out successfully"));
-  });
+});
+
+export const checkUser = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized - No user information found",
+    });
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, req.user, "User authenticated successfully")
+  );
+});

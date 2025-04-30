@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser,loginUser,logoutUser } from "../controllers/auth.controller.js";
+import { registerUser,loginUser,logoutUser,checkUser } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { upload } from "../middleware/multer.middleware.js";
 
@@ -14,6 +14,7 @@ router.post("/login",loginUser);
 
 // Protected Routes
 router.get("/logout",authMiddleware,logoutUser);  
+router.get("/check",authMiddleware,checkUser);  
 
 
 export default router;
