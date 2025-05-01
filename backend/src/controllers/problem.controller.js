@@ -64,7 +64,10 @@ export const createProblem = asyncHandler(async (req, res) => {
             console.log("Result-----", result);
             // console.log( `Testcase ${i + 1} and Language ${language} ----- result ${JSON.stringify(result.status.description)}` );
             if (result.status.id !== 3) {
-                throw new ApiError(400,`Testcase ${i + 1} failed for language ${language}`);
+                throw new ApiError(
+                    400,
+                    `Testcase ${i + 1} failed for language ${language}`
+                );
             }
         }
     }
@@ -84,15 +87,63 @@ export const createProblem = asyncHandler(async (req, res) => {
         },
     });
 
-    return res.status(201).json(new ApiResponse(201, newProblem, "Problem created successfully"));
+    return res
+        .status(201)
+        .json(new ApiResponse(201, newProblem, "Problem created successfully"));
 });
 
-export const getAllProblems = asyncHandler((req, res) => {});
+export const getAllProblems = asyncHandler(async (req, res) => {
+    const problems = await db.problem.findMany({
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            title: true,
+            difficulty: true,
+            tags: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
 
-export const getProblemById = asyncHandler((req, res) => {});
+    if (!problems || problems.length === 0) {
+        throw new ApiError(404, "No problems found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, problems, "Problems fetched successfully"));
+});
+
+export const getProblemById = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const problem = await db.problem.findUnique({
+        where: { id },
+    });
+
+    if (!problem) {
+        throw new ApiError(404, "Problem not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, problem, "Problem fetched successfully"));
+});
 
 export const updateProblem = asyncHandler((req, res) => {});
 
-export const deleteProblem = asyncHandler((req, res) => {});
+export const deleteProblem = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    // Check if problem exists
+    const problem = await db.problem.findUnique({ where: { id }, });
+    if (!problem) throw new ApiError(404, "Problem not found");
+    
+    await db.problem.delete({
+        where: { id },
+    });
+
+    return res.status(200).json(new ApiResponse(200, null, "Problem deleted successfully"));
+});
 
 export const getAllProblemsSolvedByUser = asyncHandler((req, res) => {});
