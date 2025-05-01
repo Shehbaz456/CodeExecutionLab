@@ -1,5 +1,5 @@
-import { db } from "../libs/db";
-import { asyncHandler } from "../utils/asyncHandler";
+import { db } from "../libs/db.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import {
@@ -62,8 +62,7 @@ export const createProblem = asyncHandler(async (req, res) => {
         for (let i = 0; i < results.length; i++) {
             const result = results[i];
             console.log("Result-----", result);
-            console.log( `Testcase ${i + 1} and Language ${language} ----- result ${JSON.stringify(result.status.description)}`
-            );
+            // console.log( `Testcase ${i + 1} and Language ${language} ----- result ${JSON.stringify(result.status.description)}` );
             if (result.status.id !== 3) {
                 throw new ApiError(400,`Testcase ${i + 1} failed for language ${language}`);
             }

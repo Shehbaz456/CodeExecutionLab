@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/problems", problemRoutes);
 
+console.log(process.env.JUDGE0_API_URL);
 app.listen(process.env.PORT, () => {
     console.log(`Server is Running on port ${PORT}`);
 });
