@@ -13,5 +13,9 @@ src/generated/prisma/
 *.env
 .env.*
 
+# Ignore sample files
+.sample.json
+.test.js
+
 # Ignore editor settings
 .vscode/
