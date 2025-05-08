@@ -11,16 +11,17 @@ import {
 
 const router = express.Router();
 
-router.post("/create-problem", authMiddleware, checkAdmin, createProblem);
+// Apply authMiddleware to all routes
+router.use(authMiddleware);
 
-router.get("/get-all-problems", authMiddleware, getAllProblems);
+// Admin-only routes
+router.post("/create-problem", checkAdmin, createProblem);
+router.put("/update-problem/:id", checkAdmin, updateProblem);
+router.delete("/delete-problem/:id", checkAdmin, deleteProblem);
 
-router.get("/get-problem/:id", authMiddleware, getProblemById);
-
-router.put("/update-problem/:id", authMiddleware, checkAdmin, updateProblem);
-
-router.delete("/delete-problem/:id", authMiddleware, checkAdmin, deleteProblem);
-
-router.get("/get-solved-problems", authMiddleware, getAllProblemsSolvedByUser);
+// Public (authenticated) routes
+router.get("/get-all-problems", getAllProblems);
+router.get("/get-problem/:id", getProblemById);
+router.get("/get-solved-problems", getAllProblemsSolvedByUser);
 
 export default router;

@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 
 
 /* Generate Access Token and Refresh Token */
-const generateAccessAndRefreshTokens = async (userId) => {
+const generateAccessAndRefreshTokens = asyncHandler(async (userId) => {
     try {
         const user = await db.user.findUnique({
             where: { id: userId },
@@ -45,7 +45,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
         console.error("Error generating tokens:", error);
         throw new ApiError(500, "Something went wrong while generating tokens");
     }
-};
+});
 
 export const registerUser = asyncHandler(async (req, res) => {
     const {email , password , name} = req.body;
