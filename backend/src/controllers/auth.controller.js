@@ -1,5 +1,4 @@
 import {db} from "../libs/db.js"
-import { UserRole } from "../generated/prisma/index.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -9,7 +8,7 @@ import bcrypt from "bcryptjs";
 
 
 /* Generate Access Token and Refresh Token */
-const generateAccessAndRefreshTokens = asyncHandler(async (userId) => {
+const generateAccessAndRefreshTokens = async (userId) => {
     try {
         const user = await db.user.findUnique({
             where: { id: userId },
@@ -45,7 +44,7 @@ const generateAccessAndRefreshTokens = asyncHandler(async (userId) => {
         console.error("Error generating tokens:", error);
         throw new ApiError(500, "Something went wrong while generating tokens");
     }
-});
+};
 
 export const registerUser = asyncHandler(async (req, res) => {
     const {email , password , name} = req.body;
