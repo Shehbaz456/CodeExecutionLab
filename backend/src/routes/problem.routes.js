@@ -16,12 +16,12 @@ router.use(authMiddleware);
 
 // Admin-only routes
 router.post("/create-problem", checkAdmin, createProblem);
-router.put("/update-problem/:id", checkAdmin, updateProblem);
-router.delete("/delete-problem/:id", checkAdmin, deleteProblem);
+router.put("/update-problem/:problemId", checkAdmin, updateProblem);
+router.delete("/delete-problem/:problemId", checkAdmin, deleteProblem);
 
 // Public (authenticated) routes
 router.get("/get-all-problems", getAllProblems);
-router.get("/get-problem/:id", getProblemById);
+router.get("/get-problem/:problemId", getProblemById);
 router.get("/get-solved-problems", getAllProblemsSolvedByUser);
 
 export default router;
