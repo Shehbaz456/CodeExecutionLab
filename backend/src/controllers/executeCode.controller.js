@@ -105,7 +105,7 @@ export const executeCode = asyncHandler(async (req, res) => {
         });
     }
 
-    // 8. Save individual test case results  using detailedResult
+    // Save individual test case results  using detailedResult
 
     const testCaseResults = detailedResults.map((result) => ({
         submissionId: submission.id,
