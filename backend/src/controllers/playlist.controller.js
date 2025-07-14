@@ -9,8 +9,8 @@ export const createPlaylist = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
   const userId = req.user?.id;
 
-  if (!name || !description) {
-    throw new ApiError(400, "Name and description are required");
+  if (!name) {
+    throw new ApiError(400, "Name are required");
   }
 
   const existingPlaylist = await db.playlist.findFirst({
@@ -131,12 +131,12 @@ export const deletePlaylist = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Playlist not found");
   }
 
-  const deletedPlaylist = await db.playlist.delete({
+  await db.playlist.delete({
     where: { id: playlistId },
   });
 
   res.status(200).json(
-    new ApiResponse(200, { deletedPlaylist }, "Playlist deleted successfully")
+    new ApiResponse(200, null, "Playlist deleted successfully")
   );
 });
 
