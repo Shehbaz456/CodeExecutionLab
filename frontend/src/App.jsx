@@ -1,7 +1,7 @@
 import { Routes,Route,Navigate } from "react-router-dom"
 import Home from "./page/Home"
 import Login from "./page/Login"
-import SignUp from "./page/Signup.jsx"
+import SignUp from "./page/SignUp.jsx"
 
 function App() {
   let authUser = null 
